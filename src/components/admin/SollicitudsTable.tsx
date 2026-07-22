@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { capture } from '@/lib/posthog';
 
 type Sollicitud = {
   id: string;
@@ -92,6 +93,7 @@ export default function SollicitudsTable() {
       return;
     }
 
+    capture('admin_estat_canviat', { tramit: 'empadronament', estat_nou: nouEstat });
     setError('');
     fetchData();
   };

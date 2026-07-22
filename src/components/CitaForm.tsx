@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { citaSchema, type CitaFormData } from '@/lib/schemas/cita';
 import { MOTIUS_CITA } from '@/lib/constants/cita';
+import { capture } from '@/lib/posthog';
 
 type FranjaRow = {
   id: string;
@@ -69,6 +70,7 @@ export default function CitaForm() {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     setMinDate(d.toISOString().split('T')[0]);
+    capture('tramit_iniciat', { tramit: 'cita' });
   }, []);
 
   const {
@@ -168,6 +170,7 @@ export default function CitaForm() {
 
       if (!res.ok) {
         const errBody = await res.text();
+        capture('tramit_error', { tramit: 'cita', tipus: 'api_error' });
         setSubmitState({
           status: 'error',
           message: errBody.includes('completa')
@@ -178,6 +181,7 @@ export default function CitaForm() {
       }
 
       const result = (await res.json()) as { id: string; data_cita: string; franja_horaria: string };
+      capture('tramit_completat', { tramit: 'cita' });
       setSubmitState({
         status: 'success',
         id: result.id,
@@ -185,6 +189,7 @@ export default function CitaForm() {
         franja_horaria: result.franja_horaria,
       });
     } catch {
+      capture('tramit_error', { tramit: 'cita', tipus: 'connection' });
       setSubmitState({
         status: 'error',
         message: 'Error de connexió. Torna-ho a provar.',

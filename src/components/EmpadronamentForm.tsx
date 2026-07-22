@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { empadronamentSchema, type EmpadronamentFormData } from '@/lib/schemas/empadronament';
+import { capture } from '@/lib/posthog';
 
 type SubmitState =
   | { status: 'idle' }
@@ -43,6 +44,10 @@ function FormField({
 
 export default function EmpadronamentForm() {
   const [submitState, setSubmitState] = useState<SubmitState>({ status: 'idle' });
+
+  useEffect(() => {
+    capture('tramit_iniciat', { tramit: 'empadronament' });
+  }, []);
 
   const {
     register,
@@ -94,7 +99,8 @@ export default function EmpadronamentForm() {
     );
 
     if (!response.ok) {
-      const errBody = await response.text();
+      await response.text();
+      capture('tramit_error', { tramit: 'empadronament', tipus: 'api_error' });
       setSubmitState({
         status: 'error',
         message: 'No s\'ha pogut enviar la sol·licitud. Revisa les dades o torna-ho a provar més tard.',
@@ -105,6 +111,7 @@ export default function EmpadronamentForm() {
     const result = (await response.json()) as { id: string }[];
 
     if (!result || result.length === 0) {
+      capture('tramit_error', { tramit: 'empadronament', tipus: 'no_reference' });
       setSubmitState({
         status: 'error',
         message: 'No s\'ha pogut obtenir el número de referència. Contacta amb l\'ajuntament.',
@@ -112,6 +119,7 @@ export default function EmpadronamentForm() {
       return;
     }
 
+    capture('tramit_completat', { tramit: 'empadronament' });
     setSubmitState({ status: 'success', id: result[0].id });
   };
 

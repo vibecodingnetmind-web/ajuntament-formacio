@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PostHogProvider from "@/components/PostHogProvider";
 
 export const metadata: Metadata = {
   title: "Ajuntament de Vilafictícia - Entorn de formació",
@@ -17,17 +18,19 @@ export default function RootLayout({
   return (
     <html lang="ca">
       <body className="antialiased flex flex-col min-h-screen">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-gencat-red focus:text-white focus:p-4 focus:font-bold"
-        >
-          Saltar al contingut principal
-        </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <PostHogProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-gencat-red focus:text-white focus:p-4 focus:font-bold"
+          >
+            Saltar al contingut principal
+          </a>
+          <Header />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </PostHogProvider>
       </body>
     </html>
   );

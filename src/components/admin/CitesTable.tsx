@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { capture } from '@/lib/posthog';
 
 type Cita = {
   id: string;
@@ -90,6 +91,7 @@ export default function CitesTable() {
       return;
     }
 
+    capture('admin_estat_canviat', { tramit: 'cita', estat_nou: nouEstat });
     setError('');
     fetchData();
   };
