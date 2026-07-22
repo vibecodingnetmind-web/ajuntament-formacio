@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { empadronamentSchema, type EmpadronamentFormData } from '@/lib/schemas/empadronament';
-import { supabase } from '@/lib/supabase';
 
 type SubmitState =
   | { status: 'idle' }
@@ -77,24 +76,43 @@ export default function EmpadronamentForm() {
       estat: 'pendent',
     };
 
-    const { data: result, error } = await supabase
-      .from('sollicituds_padro')
-      .insert(payload)
-      .select('id')
-      .single();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (error) {
+    const response = await fetch(
+      `${url}/rest/v1/sollicituds_padro?select=id`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: anonKey!,
+          Authorization: `Bearer ${anonKey!}`,
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      const errBody = await response.text();
       setSubmitState({
         status: 'error',
-        message:
-          error.code === '23505'
-            ? 'Ja existeix una sol·licitud amb aquest DNI/NIE.'
-            : 'No s\'ha pogut enviar la sol·licitud. Revisa les dades o torna-ho a provar més tard.',
+        message: 'No s\'ha pogut enviar la sol·licitud. Revisa les dades o torna-ho a provar més tard.',
       });
       return;
     }
 
-    setSubmitState({ status: 'success', id: result.id });
+    const result = (await response.json()) as { id: string }[];
+
+    if (!result || result.length === 0) {
+      setSubmitState({
+        status: 'error',
+        message: 'No s\'ha pogut obtenir el número de referència. Contacta amb l\'ajuntament.',
+      });
+      return;
+    }
+
+    setSubmitState({ status: 'success', id: result[0].id });
   };
 
   if (submitState.status === 'success') {

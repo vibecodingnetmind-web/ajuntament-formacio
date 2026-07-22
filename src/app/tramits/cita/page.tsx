@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import CitaForm from '@/components/CitaForm';
 
 export default function CitaPage() {
   return (
@@ -7,26 +8,21 @@ export default function CitaPage() {
         &larr; Tornar a Inici
       </Link>
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-2">
         Demana Cita Prèvia
       </h1>
+      <p className="text-gray-600 mb-8">
+        Sol·licita una cita amb l&apos;oficina d&apos;atenció ciutadana per a qualsevol tràmit municipal.
+      </p>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
-        <p className="text-gray-600 mb-4">
-          Sol·licita una cita amb l&apos;oficina d&apos;atenció ciutadana per a qualsevol tràmit municipal.
+      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+        <p className="text-sm text-yellow-800 font-semibold">
+          Aquest és un entorn de formació. No hi envieu dades reals.
         </p>
+      </div>
 
-        <div className="bg-gray-50 border-l-4 border-gencat-red p-4 mb-6">
-          <p className="text-sm text-gray-600 font-semibold">
-            Aquest és un entorn de formació. No envieu dades reals.
-          </p>
-        </div>
-
-        {/* TODO: Implementar formulari de sol·licitud de cita */}
-        <div className="text-center py-12 text-gray-400">
-          <p className="text-lg">Formulari en construcció</p>
-          <p className="text-sm mt-2">Aquí es crearà el formulari de sol·licitud de cita prèvia</p>
-        </div>
+      <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 shadow-sm">
+        <CitaForm />
       </div>
     </div>
   );
