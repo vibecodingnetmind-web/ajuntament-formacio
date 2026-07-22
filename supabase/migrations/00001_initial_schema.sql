@@ -1,15 +1,15 @@
 -- NOTA: Aquest fitxer és per a un entorn de formació. Totes les dades són fictícies.
 -- Migració inicial: Creació de les taules del sistema de padró i cites
 
--- Extensió per UUID
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Extensió per UUID (Supabase ja té pgcrypto preinstal·lat)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================================
 -- Taula: sollicituds_padro
 -- Gestiona les sol·licituds d'empadronament ciutadanes
 -- ============================================================
 CREATE TABLE sollicituds_padro (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   estat TEXT NOT NULL DEFAULT 'pendent' CHECK (estat IN ('pendent', 'en_revisio', 'aprovat', 'rebutjat')),
   nom TEXT NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE sollicituds_padro (
 -- Gestiona les cites prèvies amb l'ajuntament
 -- ============================================================
 CREATE TABLE cites (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   estat TEXT NOT NULL DEFAULT 'pendent' CHECK (estat IN ('pendent', 'confirmada', 'cancel·lada', 'realitzada')),
   nom TEXT NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE cites (
 -- Gestiona la disponibilitat horària per a les cites
 -- ============================================================
 CREATE TABLE franges_disponibles (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   data DATE NOT NULL,
   hora_inici TIME NOT NULL,
   hora_fi TIME NOT NULL,
