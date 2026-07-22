@@ -4,7 +4,7 @@ const tramits = [
   {
     title: 'Sol·licitud d\'empadronament',
     description: 'Tramita la teva sol·licitud d\'alta, baixa o modificació al padró municipal d\'habitants.',
-    href: '/tramits/padro',
+    href: '/tramits/empadronament',
     icon: '📋',
   },
   {

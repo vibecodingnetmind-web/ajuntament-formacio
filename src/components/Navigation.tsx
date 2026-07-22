@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const links = [
   { href: '/', label: 'Inici' },
-  { href: '/tramits/padro', label: 'Padró' },
+  { href: '/tramits/empadronament', label: 'Empadronament' },
   { href: '/tramits/cita', label: 'Demana cita' },
 ];
 
