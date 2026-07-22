@@ -107,7 +107,7 @@ export default function CitaForm() {
       const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
       const res = await fetch(
-        `${url}/rest/v1/franges_disponibles?data=eq.${date}&ocupades=lt.capacitat&order=hora_inici.asc`,
+        `${url}/rest/v1/franges_disponibles?data=eq.${date}&order=hora_inici.asc`,
         {
           headers: {
             apikey: anonKey!,
@@ -122,7 +122,7 @@ export default function CitaForm() {
       }
 
       const data = (await res.json()) as FranjaRow[];
-      setFranges(data);
+      setFranges(data.filter((f) => f.ocupades < f.capacitat));
     } catch {
       setFrangesError('Error de connexió en carregar les franges.');
     } finally {
